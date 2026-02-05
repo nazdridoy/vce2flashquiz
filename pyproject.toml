@@ -1,0 +1,9 @@
+[project]
+name = "vce-2-flashquiz"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "pypdf[image]>=6.6.2",
+]
