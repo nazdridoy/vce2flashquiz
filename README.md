@@ -1,6 +1,6 @@
 # vce2flashquiz
 
-A conversion utility designed to bridge the gap between VCE (Visual CertExam) exports and [obsidian-cbt-exam](https://github.com/nazdridoy/obsidian-cbt-exam). This tool transforms PDF source files into professional, human-readable [FlashQuiz](FLASHQUIZ_SPEC.md) markdown format compatible with the Obsidian CBT Exam Simulator.
+A conversion utility designed to bridge the gap between VCE (Visual CertExam) exports and [obsidian-cbt-exam](https://github.com/nazdridoy/obsidian-cbt-exam). This tool transforms PDF source files into professional, human-readable [FlashQuiz](https://github.com/nazdridoy/obsidian-cbt-exam/blob/main/FLASHQUIZ_SPEC.md) markdown format compatible with the Obsidian CBT Exam Simulator.
 
 ## Workflow
 
@@ -19,6 +19,8 @@ A conversion utility designed to bridge the gap between VCE (Visual CertExam) ex
 
 ## Setup
 
+### Using uv (Recommended)
+
 This project uses `uv` for lightning-fast dependency management.
 
 ```bash
@@ -27,15 +29,38 @@ git clone https://github.com/nazdridoy/vce2flashquiz.git
 cd vce2flashquiz
 
 # Install dependencies
-uv add pypdf
+uv sync
+```
+
+### Using pip
+
+```bash
+# Clone the repository
+git clone https://github.com/nazdridoy/vce2flashquiz.git
+cd vce2flashquiz
+
+# Create and activate a virtual environment
+python -m venv .venv
+source .venv/bin/activate
+
+# Install dependencies
+pip install -r requirements.txt
 ```
 
 ## Usage
 
 Convert your VCE PDF export with a single command:
 
+### Using uv
+
 ```bash
 uv run vce2flashquiz.py source.pdf > quiz.md
+```
+
+### Using python
+
+```bash
+python vce2flashquiz.py source.pdf > quiz.md
 ```
 
 Place the resulting `quiz.md` in your Obsidian vault and open it with the **CBT Exam Simulator** plugin.
