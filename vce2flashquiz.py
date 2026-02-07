@@ -198,6 +198,7 @@ def format_flashquiz(title, questions):
     output.append("pass-score: 80")
     output.append("shuffle: true")
     output.append("show-answer: true")
+    output.append('exam-range: "-"')
     output.append("---")
     output.append("")
     
