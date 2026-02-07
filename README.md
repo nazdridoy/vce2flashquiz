@@ -49,21 +49,37 @@ pip install -r requirements.txt
 
 ## Usage
 
-Convert your VCE PDF export with a single command:
-
-### Using uv
+### Show Help
 
 ```bash
-uv run vce2flashquiz.py source.pdf > quiz.md
+uv run vce2flashquiz.py -h
 ```
 
-### Using python
+### Single File (output to stdout)
 
 ```bash
+# Using uv
+uv run vce2flashquiz.py source.pdf > quiz.md
+
+# Using python
 python vce2flashquiz.py source.pdf > quiz.md
 ```
 
-Place the resulting `quiz.md` in your Obsidian vault and open it with the **CBT Exam Simulator** plugin.
+### Batch Convert Directory
+
+Process all PDFs in a directory at once. Creates a `.md` file alongside each PDF:
+
+```bash
+# Using uv
+uv run vce2flashquiz.py /path/to/pdfs/
+
+# Using python
+python vce2flashquiz.py /path/to/pdfs/
+```
+
+This will convert `exam1.pdf`, `exam2.pdf`, etc. into `exam1.md`, `exam2.md`, etc.
+
+Place the resulting `.md` files in your Obsidian vault and open them with the **CBT Exam Simulator** plugin.
 
 ## License
 

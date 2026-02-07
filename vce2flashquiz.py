@@ -1,7 +1,9 @@
 import sys
+import os
 import re
 import argparse
 import base64
+from pathlib import Path
 from pypdf import PdfReader
 from pypdf.generic import ContentStream
 
@@ -209,17 +211,70 @@ def format_flashquiz(title, questions):
             
     return "\n".join(output)
 
+def process_pdf(pdf_path, output_path=None):
+    """Process a single PDF file and optionally write to output file."""
+    title, questions = parse_vce_pdf(pdf_path)
+    output = format_flashquiz(title, questions)
+    
+    if output_path:
+        with open(output_path, 'w', encoding='utf-8') as f:
+            f.write(output)
+        return True
+    else:
+        print(output)
+        return True
+
 def main():
-    parser = argparse.ArgumentParser(description="Convert VCE PDF to Flashquiz with inline Base64 images.")
-    parser.add_argument("input_file", help="Path to the VCE PDF file.")
+    parser = argparse.ArgumentParser(
+        description="Convert VCE PDF to Flashquiz with inline Base64 images.",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  %(prog)s input.pdf              Convert single PDF, output to stdout
+  %(prog)s /path/to/pdfs/         Convert all PDFs in directory, create .md files
+"""
+    )
+    parser.add_argument(
+        "input_path", 
+        help="Path to a VCE PDF file or a directory containing PDF files."
+    )
     args = parser.parse_args()
     
-    if not args.input_file.lower().endswith(".pdf"):
-        print("Error: Only PDF files are supported.")
-        sys.exit(1)
+    input_path = Path(args.input_path)
+    
+    if input_path.is_dir():
+        # Process all PDFs in directory
+        pdf_files = list(input_path.glob("*.pdf")) + list(input_path.glob("*.PDF"))
         
-    title, questions = parse_vce_pdf(args.input_file)
-    print(format_flashquiz(title, questions))
+        if not pdf_files:
+            print(f"Error: No PDF files found in '{input_path}'", file=sys.stderr)
+            sys.exit(1)
+        
+        print(f"Found {len(pdf_files)} PDF file(s) to process...", file=sys.stderr)
+        
+        for pdf_file in sorted(pdf_files):
+            output_file = pdf_file.with_suffix(".md")
+            try:
+                process_pdf(str(pdf_file), str(output_file))
+                print(f"✓ Created: {output_file.name}", file=sys.stderr)
+            except Exception as e:
+                print(f"✗ Failed: {pdf_file.name} - {e}", file=sys.stderr)
+        
+        print(f"\nDone! Processed {len(pdf_files)} file(s).", file=sys.stderr)
+    
+    elif input_path.is_file():
+        # Process single PDF file
+        if not str(input_path).lower().endswith(".pdf"):
+            print("Error: Only PDF files are supported.", file=sys.stderr)
+            sys.exit(1)
+        
+        title, questions = parse_vce_pdf(str(input_path))
+        print(format_flashquiz(title, questions))
+    
+    else:
+        print(f"Error: '{input_path}' is not a valid file or directory.", file=sys.stderr)
+        sys.exit(1)
 
 if __name__ == "__main__":
     main()
+
